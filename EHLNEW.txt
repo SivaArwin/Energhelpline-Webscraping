@@ -1,0 +1,73 @@
+from selenium import webdriver
+import requests
+import pandas as pd 
+import numpy as np 
+from selenium.webdriver.support.ui import Select
+import time
+import xlsxwriter
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
+import scrapy
+from bs4 import BeautifulSoup
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+
+
+
+driver = webdriver.Chrome(executable_path="./chromedriver.exe")
+page = driver.get("http://energyhelpline.com")
+postcode = driver.find_element_by_xpath('/html/body/div[1]/div[2]/section[1]/div[2]/div/div/form/div/input[1]')
+postcode.click()
+postcode.send_keys('SR3 2DA')
+start = driver.find_element_by_xpath('/html/body/div[1]/div[2]/section[1]/div[2]/div/div/form/div/button').click()
+addrs1 = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/section/div/select/option[1]').click()
+df = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/div[2]/div[2]/div/span/div/div/div[1]/label')
+df.click()
+sup = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/div[5]/div[2]/div/span/div/div/div[1]/label').click()
+supplier = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/div[6]/div/section/div[1]/div[2]/div/span/div/div/div[4]/label').click()
+nt_sure = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/section/p/label/span[1]/input').click()
+Pment = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/div[9]/div[2]/div/span/div/div/div[2]/label').click()
+
+meter = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/div[11]/div[2]/div/span/div/div/div[2]/label').click()
+curr_spend = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/div[12]/div[2]/div/span/div/div/div[1]/label').click()
+gas_usage = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/section[2]/div[1]/div/div/div/div/span/input')
+gas_usage.send_keys('12000')
+elec_usage = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/section[2]/div[2]/div/div/div/div/div/span/input')
+elec_usage.send_keys('3100')
+deal_button = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/section[4]/button').click()
+time.sleep(3)
+all_plans = driver.find_element_by_css_selector(".ant-radio+ span")
+all_plans.click()
+time.sleep(3)
+
+TF_Table = {}
+tf_namedaa = driver.find_element_by_xpath("/html/body/div[1]/section/main/div[2]/div/div[2]/div[2]/div[2]/div[1]/div/div/ul/li/div/div/div[2]/span")
+
+exitfees = driver.find_element_by_xpath("/html/body/div[1]/section/main/div[2]/div/div[2]/div[2]/div[2]/div[1]/div/div/ul/li/div/div/div[2]/div[1]/div[1]/span")
+tf_duration = driver.find_element_by_xpath("/html/body/div[1]/section/main/div[2]/div/div[2]/div[2]/div[2]/div[1]/div/div/ul/li/div/div/div[2]/div[1]/div[2]/span")
+savings = driver.find_element_by_xpath("/html/body/div[1]/section/main/div[2]/div/div[2]/div[2]/div[2]/div[1]/div/div/ul/li/div/div/div[4]/span")
+Estimated_cost = driver.find_element_by_xpath("/html/body/div[1]/section/main/div[2]/div/div[2]/div[2]/div[2]/div[1]/div/div/ul/li/div/div/div[3]/div[1]")
+
+for tname in tf_namedaa:
+    print('Tariff Name.text')
+
+for exfee in exitfees:
+    print('Exit Fees.text')
+
+for tduration in tf_duration:
+    print('Duration.text')
+
+for save in savings:
+    print("Savings.text")
+
+for cost in Estimated_cost:
+    print("Esctimated_cost.text")
+
+file = pd.ExcelWriter('TEXT.xlsx', engine= 'xlsxwriter')
+time.sleep(2)
+
+results1 = pd.DataFrame.from_dict(TF_Table)
+writer.save()
+

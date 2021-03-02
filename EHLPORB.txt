@@ -1,0 +1,99 @@
+import pandas as pd
+import requests
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
+import scrapy
+from bs4 import BeautifulSoup
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.touch_actions import TouchActions
+import xlsxwriter
+import time
+
+driver = webdriver.Chrome(executable_path = './chromedriver.exe')
+driver.maximize_window()
+
+site = driver.get("https://www.energyhelpline.com/cashback")
+time.sleep(5)
+pst_code = driver.find_element_by_xpath("/html/body/div[1]/div[2]/section[1]/div[2]/div/div/form/div/input[1]")
+pst_code.send_keys('SS2 6LU')
+start = driver.find_element_by_xpath("/html/body/div[1]/div[2]/section[1]/div[2]/div/div/form/div/button").click()
+time.sleep(5)
+addr = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/section/div/select/option[1]').click()
+time.sleep(5)
+df = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/div[3]/div[2]/div/span/div/div/div[1]/label')
+df.click()
+time.sleep(5)
+df_sup = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/div[5]/div[2]/div/span/div/div/div[1]/label')
+df_sup.click()
+time.sleep(5)
+Npower = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/div[7]/div/section/div[1]/div[2]/div/span/div/div/div[4]/label')
+Npower.click()
+time.sleep(5)
+curr_tf = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/section[2]/p/label/span[1]/input')
+curr_tf.click()
+PORB = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/div[10]/div[2]/div/span/div/div/div[2]/label')
+PORB.click()
+time.sleep(5)
+E7 = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/div[12]/div[2]/div/span/div/div/div[2]/label')
+E7.click()
+time.sleep(5)
+print("""NO""")
+Spend = driver.find_element_by_xpath("/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/div[13]/div[2]/div/span/div/div/div[1]/label")
+Spend.click()
+time.sleep(5)
+gas_usage = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/section[3]/div[1]/div/div/div/div/span/input')
+gas_usage.send_keys('12000')
+elec_usage = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/section[3]/div[2]/div/div/div/div/div/span/input')
+elec_usage.send_keys('3100')
+time.sleep(2)
+Button = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div/div[1]/div/div/div/form/section[5]/button')
+Button.click()
+time.sleep(3)
+
+load_more = driver.find_element_by_css_selector('''#root > section > main > div.page-container > div > div.ant-row > div.ant-col.ant-col-lg-19 > div.results-load-more > button''')
+load_more.click()
+
+
+all_taf = driver.find_element_by_xpath('/html/body/div[1]/section/main/div[2]/div/div[2]/div[1]/div/form/div[3]/div[2]/div/span/div/label[2]/span[2]')
+all_taf.click()
+
+dict = []
+
+tfn = driver.find_elements_by_xpath('/html/body/div[1]/section/main/div[2]/div/div[2]/div[2]/div[2]/div/div/div/ul/li/div/div/div[2]/span/strong')
+exit_fee = driver.find_elements_by_xpath('/html/body/div[1]/section/main/div[2]/div/div[2]/div[2]/div[2]/div/div/div/ul/li/div/div/div[2]/div[1]/div[1]')
+est_spend = driver.find_elements_by_xpath('/html/body/div[1]/section/main/div[2]/div/div[2]/div[2]/div[2]/div/div/div/ul/li/div/div/div[3]/div[1]')
+save = driver.find_elements_by_xpath('/html/body/div[1]/section/main/div[2]/div/div[2]/div[2]/div[2]/div/div/div/ul/li/div/div/div[4]')
+duration = driver.find_elements_by_xpath('/html/body/div[1]/section/main/div[2]/div/div[2]/div[2]/div[2]/div/div/div/ul/li/div/div/div[2]/div[1]/div[2]')
+
+for tariff in tfn:
+    tariff_ = print(tariff.text)
+    dict.setdefault("tariff name",[]).append(tariff_name.text)
+print("appada")
+
+for exit in exit_fee:
+    Exit_fee = print(exit.text)
+    dict.setdefault("cancellation Fees",[]).append(Exit_fees.text)
+print("ok_da Maapla")
+
+for estimate in est_spend:
+    spendd = print(estimate.text)
+    dict.setdefault("Yearly Spend",[]).append(spendd.text)
+print("hmm")
+
+for savings in save:
+    save_upto = print(savings.text)
+    dict.setdefault("savings per year",[]).append(savings.text)
+print('ok')
+
+for type_ in duration:
+    type_tar = print(type_.text)
+    dict.setdefault("tariff duration",[]).append(type_.text)
+print('hi') 
+
+df = pd.DataFrame(dict, columns=['tariff_', 'Exit_fee','spendd','save_upto','type_tar'])
+df.to_excel('sivas1.xlsx')
+
